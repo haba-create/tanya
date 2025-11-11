@@ -1,0 +1,256 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  extensions = [pgvector(map: "vector")]
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+enum ClassType {
+  YOGA
+  MARTIAL_ARTS
+  MEDITATION
+  WORKSHOP
+  PRIVATE_SESSION
+}
+
+enum ScheduleStatus {
+  SCHEDULED
+  CANCELLED
+  COMPLETED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+  FAILED
+}
+
+enum AppointmentType {
+  PRIVATE_SESSION
+  CONSULTATION
+  ASSESSMENT
+}
+
+enum KnowledgeCategory {
+  CLASSES
+  PRICING
+  POLICIES
+  WELLNESS_TIPS
+  FAQ
+  ABOUT
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  phone         String?
+  password      String
+  role          UserRole  @default(CUSTOMER)
+  image         String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  bookings      Booking[]
+  appointments  Appointment[]
+  chatSessions  ChatSession[]
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Class {
+  id          String     @id @default(cuid())
+  title       String
+  description String
+  type        ClassType
+  duration    Int        // in minutes
+  capacity    Int        @default(15)
+  price       Float
+  imageUrl    String?
+  level       String     @default("All Levels") // Beginner, Intermediate, Advanced, All Levels
+  isActive    Boolean    @default(true)
+  benefits    String[]   @default([])
+  requirements String[]  @default([])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  schedules   ClassSchedule[]
+
+  @@map("classes")
+}
+
+model ClassSchedule {
+  id              String         @id @default(cuid())
+  classId         String
+  startTime       DateTime
+  endTime         DateTime
+  availableSpots  Int
+  status          ScheduleStatus @default(SCHEDULED)
+  instructor      String         @default("Tanya")
+  notes           String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  class           Class          @relation(fields: [classId], references: [id], onDelete: Cascade)
+  bookings        Booking[]
+
+  @@index([startTime, status])
+  @@map("class_schedules")
+}
+
+model Booking {
+  id                String        @id @default(cuid())
+  userId            String
+  scheduleId        String
+  status            BookingStatus @default(PENDING)
+  paymentStatus     PaymentStatus @default(PENDING)
+  paymentIntentId   String?       @unique
+  amount            Float
+  notes             String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  user              User          @relation(fields: [userId], references: [id])
+  schedule          ClassSchedule @relation(fields: [scheduleId], references: [id])
+
+  @@index([userId, status])
+  @@index([scheduleId])
+  @@map("bookings")
+}
+
+model Appointment {
+  id              String           @id @default(cuid())
+  userId          String
+  type            AppointmentType
+  dateTime        DateTime
+  duration        Int              // in minutes
+  status          BookingStatus    @default(PENDING)
+  paymentStatus   PaymentStatus    @default(PENDING)
+  paymentIntentId String?          @unique
+  amount          Float
+  notes           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  user            User             @relation(fields: [userId], references: [id])
+
+  @@index([userId, status])
+  @@index([dateTime])
+  @@map("appointments")
+}
+
+model BusinessKnowledge {
+  id        String            @id @default(cuid())
+  title     String
+  content   String
+  category  KnowledgeCategory
+  embedding Unsupported("vector(1536)")?
+  metadata  Json?
+  isActive  Boolean           @default(true)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([category, isActive])
+  @@map("business_knowledge")
+}
+
+model ChatSession {
+  id        String    @id @default(cuid())
+  userId    String?
+  sessionId String    @unique
+  messages  Json      // Array of {role, content, timestamp}
+  metadata  Json?     // User info, preferences, etc.
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user      User?     @relation(fields: [userId], references: [id])
+
+  @@index([sessionId])
+  @@index([userId])
+  @@map("chat_sessions")
+}
+
+model Newsletter {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("newsletter_subscriptions")
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("contact_messages")
+}

@@ -1,0 +1,198 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 20% 98%;
+    --foreground: 180 5% 18%;
+    --card: 40 20% 99%;
+    --card-foreground: 180 5% 18%;
+    --popover: 40 20% 99%;
+    --popover-foreground: 180 5% 18%;
+    --primary: 100 15% 67%;
+    --primary-foreground: 180 5% 18%;
+    --secondary: 270 35% 78%;
+    --secondary-foreground: 180 5% 18%;
+    --muted: 40 15% 94%;
+    --muted-foreground: 180 4% 45%;
+    --accent: 10 35% 71%;
+    --accent-foreground: 180 5% 18%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 100 10% 85%;
+    --input: 100 10% 85%;
+    --ring: 100 15% 67%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 180 10% 10%;
+    --foreground: 40 20% 98%;
+    --card: 180 10% 12%;
+    --card-foreground: 40 20% 98%;
+    --popover: 180 10% 12%;
+    --popover-foreground: 40 20% 98%;
+    --primary: 100 15% 55%;
+    --primary-foreground: 40 20% 98%;
+    --secondary: 270 25% 45%;
+    --secondary-foreground: 40 20% 98%;
+    --muted: 180 8% 20%;
+    --muted-foreground: 40 10% 65%;
+    --accent: 10 30% 50%;
+    --accent-foreground: 40 20% 98%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 40 20% 98%;
+    --border: 180 8% 20%;
+    --input: 180 8% 20%;
+    --ring: 100 15% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-inter;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-cormorant;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted/30;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/30 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary/50;
+}
+
+/* Smooth transitions */
+* {
+  @apply transition-colors duration-200;
+}
+
+/* Focus styles */
+*:focus-visible {
+  @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+}
+
+/* Custom animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Gradient backgrounds */
+.gradient-sage {
+  background: linear-gradient(135deg, #a8b5a0 0%, #8a9b82 100%);
+}
+
+.gradient-lavender {
+  background: linear-gradient(135deg, #c5b4e3 0%, #a281ca 100%);
+}
+
+.gradient-calm {
+  background: linear-gradient(135deg, #faf7f0 0%, #f6f7f6 50%, #f0edf5 100%);
+}
+
+/* Glass morphism */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+  background: rgba(44, 51, 51, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(44, 51, 51, 0.3);
+}
+
+/* Shadow styles */
+.shadow-calm {
+  box-shadow: 0 4px 20px rgba(168, 181, 160, 0.15);
+}
+
+.shadow-calm-lg {
+  box-shadow: 0 10px 40px rgba(168, 181, 160, 0.2);
+}
+
+/* Button hover effects */
+.btn-hover-lift {
+  @apply transition-all duration-300 ease-out;
+}
+
+.btn-hover-lift:hover {
+  @apply -translate-y-0.5 shadow-calm-lg;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-300 ease-out;
+}
+
+.card-hover:hover {
+  @apply shadow-calm-lg scale-[1.02];
+}
+
+/* Text gradient */
+.text-gradient {
+  background: linear-gradient(135deg, #a8b5a0 0%, #c5b4e3 50%, #d4a59a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Loading spinner */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 2s linear infinite;
+}
+
+/* Breathing animation for meditation elements */
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
