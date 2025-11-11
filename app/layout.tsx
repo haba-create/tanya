@@ -1,26 +1,5 @@
 import type { Metadata } from "next"
-import { Inter, Cormorant_Garamond, Raleway } from "next/font/google"
 import "./globals.css"
-import { cn } from "@/lib/utils"
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const cormorant = Cormorant_Garamond({
-  weight: ['300', '400', '500', '600', '700'],
-  subsets: ["latin"],
-  variable: '--font-cormorant',
-  display: 'swap',
-})
-
-const raleway = Raleway({
-  subsets: ["latin"],
-  variable: '--font-raleway',
-  display: 'swap',
-})
 
 export const metadata: Metadata = {
   title: "Tanya's Wellness Practice | Yoga & Martial Arts in Primrose Hill",
@@ -45,8 +24,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={cn(inter.variable, cormorant.variable, raleway.variable)}>
-      <body className="min-h-screen bg-background antialiased">
+    <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Raleway:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="min-h-screen bg-background antialiased font-inter">
         {children}
       </body>
     </html>
