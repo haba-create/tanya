@@ -90,9 +90,9 @@ export async function POST(req: NextRequest) {
       systemPrompt += `\n\nCurrent Information from Web Search:\n\n${searchContext}\n\nUse this information if relevant to the user's question about current events or trends.`
     }
 
-    // Call Claude Haiku 4.5
+    // Call Claude 3.5 Haiku
     const response = await anthropic.messages.create({
-      model: "claude-haiku-4-20250514",
+      model: "claude-3-5-haiku-20241022",
       max_tokens: 1024,
       system: systemPrompt,
       messages: claudeMessages,
